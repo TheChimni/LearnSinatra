@@ -18,5 +18,7 @@ get '/*' do
   request = Net::HTTP::Get.new(uri.request_uri)
   request['X-API-Key'] = 'awesomeserver'
   response = http.request(request)
-  response.body
+  
+  # passing the full response to the client including HTTP status and headers
+  [response.code.to_i, response.to_hash, response.body]
 end
