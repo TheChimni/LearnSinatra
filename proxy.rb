@@ -6,34 +6,27 @@ require 'net/http'
 require 'uri'
 
 configure do
-   set :port => 4568, :env => 'HTTP_X_API_KEY'
+   set :port => 4568
 end
 
 get '/' do
-  'welcome to proxy'
-  # uri = URI('/')
   uri =  URI.parse("http://localhost:4567")
 
-  # uri.query = [uri.query, "api_key"].compact.join('?') 
-
-  # puts uri
-
+  # Forward the client request to server after adding 'x-api-key' header 
   http = Net::HTTP.new(uri.host, uri.port)
   request = Net::HTTP::Get.new(uri.request_uri)
-  request['header-name'] = 'HTTP_X_API_KEY'
-  puts request.to_s
+  request['X-API-Key'] = 'awesomeserver'
   response = http.request(request)
+  response.body
+end
 
+get '/hello_world' do
+  uri =  URI.parse("http://localhost:4567/hello_world?api_key=awesomeserver")
 
-  
-  # res = Net::HTTP.start('localhost', 4568) do |h| 
-  #   req = Net::HTTP::Get.new(uri.request_uri)
-
-  #   # req.inspect()
-  #   # req = h.get(uri.request_uri + "?api_key")
-  #   # req.params 
-  #   res1 = Net::HTTP.start('localhost', 4567) do |h1| 
-  #     response = h1.request req
-  #   end
-  # end
+  # Forward the client request to server after adding the api_key param
+  http = Net::HTTP.new(uri.host, uri.port)
+  request = Net::HTTP::Get.new(uri.request_uri)
+  # request['X-API-Key'] = 'awesomeserver'
+  response = http.request(request)
+  response.body
 end
