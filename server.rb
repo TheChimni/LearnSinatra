@@ -2,7 +2,9 @@
 
 require 'rubygems'
 require 'sinatra'
+require_relative 'proxy'
 
+use ApiHeaderProxy
 
 before do
   # check for API key in `X-API-Key` header or `api_key` query param

@@ -1,24 +1,13 @@
 # encoding: utf-8
+class ApiHeaderProxy
 
-require 'rubygems'
-require 'sinatra'
-require 'net/http'
-require 'uri'
+  def initialize(app, options={})
+    @app  = app
+  end
 
-configure do
-   set :port => 4568
-end
+  def call(env)
+    env['HTTP_X_API_KEY'] = 'awesomeserver'
+    @app.call(env)
+  end
 
-get '/*' do
-  path = params[:splat].first
-  uri = URI.parse("http://localhost:4567/#{path}")
-
-  # Forward the client request to server after adding 'x-api-key' header 
-  http = Net::HTTP.new(uri.host, uri.port)
-  request = Net::HTTP::Get.new(uri.request_uri)
-  request['X-API-Key'] = 'awesomeserver'
-  response = http.request(request)
-  
-  # passing the full response to the client including HTTP status and headers
-  [response.code.to_i, response.to_hash, response.body]
 end
